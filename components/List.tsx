@@ -14,7 +14,6 @@ interface ListProps {
  * 2. Link 클래스 정리
  * */
 const List = ({ data }: ListProps) => {
-  console.log('[data]', data);
   return (
     <ul
       className="mt-16 grid grid-cols-1 gap-6"
@@ -29,15 +28,19 @@ const List = ({ data }: ListProps) => {
               href={`/post/${category}/${id}`}
             >
               <div className="z-10 flex flex-col space-y-1">
-                <div className="flex items-center space-x-2">
-                  <h3 className="font-medium leading-4 text-white">{title}</h3>
-                  <i className="text-[14px] text-gray-500">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+                  <h3 className="ellipsis max-w-lg font-medium leading-4 text-white">
+                    {title}
+                  </h3>
+                  <i className="mb-1 mt-1 text-nowrap text-xs text-gray-500 sm:m-0 sm:text-[14px]">
                     {formatDate(date)}
                   </i>
                 </div>
-                <span className="text-gray-400">{description}</span>
+                <span className="ellipsis max-w-lg text-gray-400">
+                  {description}
+                </span>
               </div>
-              <i className="w-3 text-gray-300 transition duration-500 group-hover:rotate-45">
+              <i className="ml-4 flex h-3 w-3 text-gray-300 transition duration-500 group-hover:rotate-45">
                 <ArrowUpRightIcon />
               </i>
             </Link>

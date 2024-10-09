@@ -8,14 +8,14 @@ interface HeaderProps {
 const Header = ({ title, subtitle }: HeaderProps) => {
   return (
     <header
-      className="mb-4 flex items-center justify-between md:mb-8"
+      className="mb-4 mt-6 flex items-center justify-between md:mb-8"
       data-animate
       data-animate-speed="slow"
     >
       <div>
         <h2
           className={clsx(
-            'text-4xl text-white md:text-3xl',
+            'text-2xl text-white md:text-3xl',
             breathney.className,
           )}
         >

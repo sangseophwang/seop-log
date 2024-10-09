@@ -1,10 +1,6 @@
 import { Link } from '@/components';
 import { CommandButton } from '@/components/Buttons';
 
-// I’m a <em className="mr-0.5">Frontend Engineer</em> who enjoys tackling
-// problems with a focus on simplicity, usability, and responsiveness, and
-// I have a passion for creating intuitive and efficient user interfaces.
-
 const Introduction = () => {
   return (
     <main
@@ -12,11 +8,13 @@ const Introduction = () => {
       data-animate
       data-animate-speed="slow"
     >
-      <p>
+      <p className="inline sm:inline-block">
         I&#39;m a <em className="mr-0.5">Frontend Engineer</em> who loves to
         solve issues with an emphasis on
       </p>
-      <p>responsiveness, usability, and user interfaces.</p>
+      <p className="inline sm:inline-block">
+        responsiveness, usability, and user interfaces.
+      </p>
 
       <div className="mt-10">
         <strong className="text-sm font-medium text-slate-300">

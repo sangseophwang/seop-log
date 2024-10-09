@@ -40,6 +40,16 @@ pre {
     @apply transition-all duration-300 ease-in-out;
 }
 
+.ellipsis {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+
+    text-overflow: ellipsis;
+    word-wrap: normal;
+}
+
 /* -- variable --- */
 @layer base {
     :root {
