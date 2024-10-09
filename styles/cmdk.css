@@ -1,0 +1,123 @@
+/* cmdk menu */
+
+.raycast [cmdk-root] {
+    @apply relative mx-auto w-full max-w-2xl rounded-xl border border-slate-700 bg-gradient-to-b from-[#141522]/95 to-[#000000]/95 py-2 shadow-lg;
+}
+
+.raycast [cmdk-root]:before {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    border-radius: 12px;
+    top: -1px;
+    left: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    box-shadow: 0 0 0 1px transparent;
+    animation: border 1s linear forwards 0.5s;
+}
+
+.raycast [cmdk-input] {
+    @apply w-full border-0 bg-[var(--bg)] px-4 py-2 text-[15px] text-white outline-none;
+}
+
+.raycast [cmdk-input]::placeholder {
+    @apply text-gray-500;
+}
+
+.cmdk-raycast-loader {
+    @apply bg-gray-700;
+    --loader-color: hsl(0, 0%, 43.9%);
+    border: 0;
+    width: 100%;
+    left: 0;
+    height: 1px;
+    position: relative;
+    overflow: visible;
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+[cmdk-item] {
+    @apply flex h-10 cursor-pointer items-center rounded-md px-2 text-sm text-gray-100;
+    content-visibility: auto;
+    gap: 8px;
+    user-select: none;
+    will-change: background, color;
+    transition: all 150ms ease;
+    transition-property: none;
+}
+
+[cmdk-item][data-selected="true"] {
+    @apply bg-gray-800 text-white;
+}
+
+[cmdk-item]:active {
+    @apply bg-gray-800;
+    transition-property: background;
+}
+
+[cmdk-item]:first-child {
+    margin-top: 8px;
+}
+
+[cmdk-item] + [cmdk-item] {
+    margin-top: 4px;
+}
+
+[cmdk-item] svg {
+    width: 18px;
+    height: 18px;
+}
+
+[cmdk-raycast-meta] {
+    @apply ml-auto text-xs text-gray-500;
+}
+
+[cmdk-list] {
+    height: 393px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block-end: 40px;
+    transition: 100ms ease;
+    transition-property: height;
+    padding: 0 8px 40px;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+        border-radius: 10px;
+        @apply bg-gray-600;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        height: 3px;
+        border-radius: 10px;
+        @apply bg-gray-700;
+    }
+}
+
+[cmdk-group] {
+    @apply mt-3;
+}
+
+[cmdk-group-heading] {
+    @apply flex items-center text-xs text-slate-500;
+    user-select: none;
+    padding: 0 8px;
+}
+
+.cmdk-raycast-footer {
+    @apply absolute bottom-0 flex h-10 w-full items-center rounded-b-xl border-t border-gray-700 bg-black p-2;
+}
+
+.cmdk-raycast-footer svg {
+    width: 20px;
+    height: 20px;
+    filter: grayscale(1);
+    margin-right: auto;
+}
+
+[cmdk-empty] {
+    @apply flex h-20 items-center justify-center whitespace-pre-wrap text-sm text-gray-500;
+}

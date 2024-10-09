@@ -1,0 +1,54 @@
+@import 'prism.css';
+@import 'cmdk.css';
+@import 'blur-layer.css';
+@import 'intro-stage.css';
+@import 'animation.css';
+
+@tailwind base;
+@tailwind utilities;
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+    scroll-behavior: smooth;
+}
+
+pre {
+    &::-webkit-scrollbar {
+        height: 4px;
+        border-radius: 10px;
+        background-color: #4c4c4c;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        height: 3px;
+        border-radius: 10px;
+        background-color: #888;
+    }
+}
+
+::selection {
+    background: rgba(37, 99, 235, 0.5);
+}
+
+.blur-bg {
+    @apply opacity-80 blur default-transition;
+}
+
+.default-transition {
+    @apply transition-all duration-300 ease-in-out;
+}
+
+/* -- variable --- */
+@layer base {
+    :root {
+        --page-top: 120px;
+    }
+
+    @media (max-width: 1024px) {
+        :root {
+            --page-top: 75px;
+        }
+    }
+}

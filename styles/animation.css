@@ -1,0 +1,7 @@
+/* animation */
+
+@keyframes border {
+    to {
+        box-shadow: 0 0 0 1px hsl(0, 0%, 20.5%);
+    }
+}

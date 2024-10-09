@@ -33,7 +33,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
+types/next-env.d.ts
 
 # used Zero-Install
 .yarn/*
