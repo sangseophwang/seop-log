@@ -1,8 +1,176 @@
 export const metadata = {
   title: '블로그(v1.0) 개발기',
   description: '개인 블로그 개발 관련 내용과 글또 참여에 대한 다짐',
-  date: '2024-10-09 23:00:00'
+  date: '2024-10-13 18:50:00'
 }
 
 ## 들어가면서
+
+> 개발자로써 블로그는 늘 마음 한 켠에 깃든 짐과 같았습니다. <br />
+> 온전히 내 손으로 일군 공간을 만들고 싶었지만 바쁘다는 핑계로 미뤄왔습니다. <br />
+> 그리고 지금, 드디어 완성한 미완성의 공간을 소개해보고자 합니다.
+
+## 기(起)
+
+모든 개발은 기획으로부터 출발한다고 생각합니다. <br />
+명확한 방향이 있어야 유연하게 확장이 가능하기 때문입니다.
+
+<br />
+
+**우선 방향을 정하기 전 기존 블로그가 어땠는지 하나씩 짚어보기로 했습니다.**
+
+- 이전 블로그는 [티스토리](https://sangseophwang.tistory.com/)로 구성했습니다.
+- 블로그는 카드 형식의 이미지와 상단, 우측에 구성된 메뉴로 접근 가능했습니다.
+- 게시글에 접근하기는 편하지만 한 화면에 많은 정보가 담겨 산만하다는 인상이 강했습니다.
+- 모든 게시글의 썸네일을 신경써야 했습니다.
+- 인터렉션이 없어 다소 심심하고 뻣뻣한 느낌이 들었습니다.
+- 화이트 배경이라 어두운 곳에서 눈이 부실 수 있습니다.
+
+<br />
+
+**이에 다음과 같은 방향을 설정해보기로 했습니다.**
+
+- 한 화면에는 최소한의 정보만 담아 단순하게 구성한다.
+- 작은 부분에도 인터렉션을 추가해 컨텐츠로 이동하는 과정을 단조롭지 않게 한다.
+- 배경은 어둡게 구성한다.
+
+## 승(承)
+
+간단한 방향을 정했으니 다음은 무엇으로 개발할 것인가를 정해야 했습니다. <br />
+개발 기간을 **5일** 정도로 잡았기 때문에 익숙함과 새로움을 적절히 섞을 필요가 있었습니다. <br />
+이에 선택한 기술은 다음과 같습니다.
+
+- **next.js(14.2)**
+  - 가장 익숙한 프레임워크이기에 초기 설정과 기본 기능에 익숙했습니다.
+  - 서버 컴포넌트의 이점을 살려 번들 사이즈와 성능을 높일 수 있습니다.
+  - [mdx-components](https://nextjs.org/docs/app/building-your-application/configuring/mdx#getting-started)로 게시글을 관리했습니다.
+- **tailwind**
+  - emotion, scss module과 같은 익숙한 스타일에서 벗어나보고 싶었습니다.
+  - 클래스에 직접 스타일을 작성하는게 낮설었지만 사용해보니 편하다는 생각이 들었습니다.
+- **[cmdk](https://cmdk.paco.me/)**
+  - 단순하고 직관적인 메뉴 패키지입니다.
+  - 커맨드 키 조작 기능, 검색 기능 등 편의성을 제공할 수 있습니다.
+- clsx
+  - 조건부 스타일 제어를 위해 사용했습니다.
+  - classnames 패키지보다 [많은 유저가 사용](https://npmtrends.com/classnames-vs-clsx)하고 [가볍다](https://bundlephobia.com/package/clsx@2.1.1)는 장점이 있습니다.
+
+## 전(轉)
+
+세번째로 어떻게 개발할 것인가, 어떻게 개발했는가입니다. <br />
+먼저 프로젝트 레이아웃을 구성하기 위해 다음과 같이 **폴더 구조**를 만들었습니다.
+
+```plaintext
+📁
+├── app
+│    ├── [slug]
+│    └── post/[...slug]
+├── components
+├── constants
+├── contents
+├── fonts
+├── providers
+├── styles
+└── utils
+```
+
+#### 폴더 구조 설명
+- **app**
+  - [slug]
+    - 카테고리 메뉴 슬러그용 페이지입니다.
+    - [generateStaticParams](https://nextjs.org/docs/app/api-reference/functions/generate-static-params)로 접근 가능한 슬러그를 지정했습니다.
+  - post/[...slug]
+    - contents 디렉토리의 카테고리, mdx 문서를 불러오기 위해 [catch-all segments](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes#catch-all-segments)를 적용했습니다.
+- **components**
+  - 페이지를 구성하는 컴포넌트 디렉토리입니다.
+  - 기본은 단일 파일이지만, 같은 범주에 속해있는 컴포넌트는 디렉토리로 구성해 관리했습니다. (Buttons, Icons..)
+- **constants**
+  - 상수를 관리하는 디렉토리입니다.
+  - header, meta 정보 외에도 커스텀 mdx 정보를 관리하고 있습니다.
+- **contents**
+  - mdx 문서를 관리하는 디렉토리입니다.
+  - 추후 이미지도 해당 디렉토리에서 관리할 예정입니다.
+- **fonts**
+  - 로컬 폰트를 관리하는 페이지입니다.
+  - 폰트는 [Pretendard](https://github.com/orioncactus/pretendard), [Breathney](https://www.dafont.com/breathney.font) 두 가지를 사용하고 있습니다.
+- **providers**
+  - context api를 관리하는 디렉토리입니다.
+  - 가벼운 프로젝트이기 때문에 전역 스토어 패키지를 사용하지 않았습니다.
+  - 현재는 메뉴 오픈 상태를 제어하는 컨텍스트만 관리하고 있습니다.
+- **styles**
+  - 전역 스타일을 관리하는 디렉토리입니다.
+  - global style이나 전역 스타일 변수,애니메이션 등을 관리하고 있습니다.
+- **types**
+  - 재사용하는 타입을 관리하는 디렉토리입니다.
+- **utils**
+  - 주로 재사용하는 유틸 함수를 관리하는 디렉토리입니다.
+<br/>
+
+위 구성을 통해 관심사 분리와 확장에 용이한 구조를 구성할 수 있었습니다. <br />
+다음은 프로젝트를 진행하며 만난 **문제와 해결** 방법입니다. <br />
+
+**1. mdx frontmatter 분리**
+  - 문제
+    - mdx 문서를 렌더할 때 메타 정보를 분리해 적용해야 했습니다.
+  - 해결과정
+    - 처음엔 [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support) 패키지를 사용했지만 파싱한 컨텐츠의 코드 스타일이 제대로 적용되지 않는 문제가 있었습니다.
+    - 이에 next.js 문서의 [fronmatter](https://nextjs.org/docs/app/building-your-application/configuring/mdx#frontmatter)를 참고해 metadata를 상수로 분리하고 컴포넌트 내부에서 직접 import하는 방식을 사용했습니다.
+
+```tsx
+useEffect(() => {
+  import(`../contents/${category}/${file}.mdx`).then((mod) => {
+    setMDX(() => mod.default);
+    setMetadata(() => mod.metadata);
+  });
+}, [category, file]);
+```
+<br/>
+
+**2. mdx 문서 경로**
+  - 문제
+    - mdx 문서를 불러오기 위해 contents 디렉토리 경로를 알아야 했습니다.
+  - 해결과정
+    - 서버 컴포넌트에서 경로를 불러오기 위해 middleware를 적용했습니다.
+    - 불러온 경로 정보를 기반으로 해당 디렉토리의 파일명을 링크에 추가했습니다.
+
+```ts
+// middleware.ts
+export function middleware(request: NextRequest) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-pathname', request.nextUrl.pathname);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+}
+
+// [slug]/page.tsx
+const headersList = headers();
+const headerPathname = headersList.get('x-pathname') || '';
+const category = headerPathname.substring(1);
+
+const postData = getSortedPostData({ category }); // 1번의 category, file 정보가 담긴 데이터
+
+...
+
+return (
+  <Link href={`/post/${category}/${file}`}>
+    ...
+  </Link>
+)
+```
+
+## 결(結)
+
+#### 소감
+여전히 블로그에 추가하고 싶은 기능은 많습니다.
+게시글 네비게이터, 댓글 기능, 에디터 등 지금보다 더욱 **'블로그스러운'** 기능들을 하나하나 추가해보려 합니다.
+텍스트 스타일도 현재는 기본 mdx 스타일을 사용하고 있는데, 보다 읽기 편하고 직관적인 스타일로 하나하나 변경할 예정입니다.
+그리고 일상기를 담을 life, ui 실험기를 담을 experiment 페이지도 게시글을 추가해 조만간 오픈할 예정입니다.
+
+#### + 글또 다짐
+이 블로그를 만들게 된 계기 중 하나는 글또에 참여하게 된 것입니다.
+맛있는 장을 만들기 위해 좋은 장독에 담듯 보다 양질의 글을 작성하기 위한 마음가짐을 담아 블로그를 만들었습니다.
+6개월이라는 정해진 기간이 끝나더라도 글을 작성하는 습관, 좋은 글을 작성하기 위한 정성을 길러보고자 합니다.
 
