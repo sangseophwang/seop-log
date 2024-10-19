@@ -1,6 +1,7 @@
 import { PageLayout } from '@/components/Layouts';
 
 import { Post } from '@/components';
+import Comment from '@/components/Comment';
 
 interface PostPageProps {
   params: {
@@ -22,6 +23,7 @@ const PostPage = ({
         data-animate-speed="fast"
       >
         <Post category={category} file={file} />
+        <Comment className="mx-auto mt-20" />
       </article>
     </PageLayout>
   );
