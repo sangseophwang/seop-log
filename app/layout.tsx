@@ -7,7 +7,7 @@ import { Menu } from '@/components';
 import { MenuButton } from '@/components/Buttons';
 import { BaseLayout } from '@/components/Layouts';
 
-import { meta } from '@/constants/meta';
+import { Meta } from '@/constants/meta';
 
 import { pretendard } from '@/fonts';
 
@@ -16,7 +16,7 @@ import { CommandMenuProvider } from '@/providers';
 import '@/styles/globals.css';
 
 // TODO: 메타데이터, 오픈그래프, 파비콘, 로봇 등
-export const metadata: Metadata = meta;
+export const metadata: Metadata = Meta;
 
 export const dynamicParams = false;
 
