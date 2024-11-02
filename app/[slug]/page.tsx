@@ -11,14 +11,13 @@ export function generateStaticParams() {
   return headerSlugs.map((key) => ({ slug: key }));
 }
 
-// TODO: title 기본값 제거
 // TODO: 각 페이지 meta 정보
 const SlugPage = () => {
   const headersList = headers();
   const headerPathname = headersList.get('x-pathname') || '';
   const category = headerPathname.substring(1);
 
-  const { title = '', subtitle } = headerMeta.get(category) ?? {};
+  const { title, subtitle } = headerMeta.get(category) ?? {};
 
   const postData = getSortedPostData({ category });
 

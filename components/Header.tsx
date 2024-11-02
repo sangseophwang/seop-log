@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import { breathney } from '@/fonts';
 interface HeaderProps {
-  title: string;
+  title?: string;
   subtitle?: string;
 }
 
-const Header = ({ title, subtitle }: HeaderProps) => {
+const Header = ({ title = '', subtitle }: HeaderProps) => {
   return (
     <header
       className="mb-4 mt-6 flex items-center justify-between md:mb-8"
