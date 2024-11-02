@@ -2,7 +2,7 @@ export const site = {
   title: 'Seop-Log',
   description: '개발, 일상기를 담은 블로그입니다✨',
   keywords: 'seop,log,블로그,프론트엔드,개발,일상',
-  image: '/opengraph.png',
+  image: '/opengraph-image.png',
   url: 'https://seop-log.vercel.app/',
 };
 
