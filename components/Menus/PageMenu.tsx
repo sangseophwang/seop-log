@@ -31,13 +31,9 @@ const PageMenu = () => {
         <CodeIcon className="h-4 w-4" />
         Dev
       </Command.Item>
-      <Command.Item
-        className="cursor-not-allowed select-none"
-        value="Life"
-        // onSelect={() => route('/life')}
-      >
+      <Command.Item value="Life" onSelect={() => route('/life')}>
         <LifeIcon className="h-4 w-4" />
-        Life (Coming Soon)
+        Life
       </Command.Item>
       <Command.Item
         className="cursor-not-allowed select-none"
