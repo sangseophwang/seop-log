@@ -1,0 +1,409 @@
+import Image from "next/image";
+import downloadImage from "../image/dev/script-generator-part-1/1.png";
+
+export const metadata = {
+  title: '스크립트 생성기 프로젝트_part.1',
+  description: '사내 프로젝트인 스크립트 생성기 제작 과정, 그 첫 번째 이야기',
+  date: '2024-11-23 21:40:00'
+}
+
+
+
+## 들어가며
+
+**새로운 회사, 새로운 도메인**에 적응하느라 바쁜 나날을 보내고 있는 요즘입니다. <br/>
+이제 곧 있으면 (작성 시작일 기준) 한 달이 다 되어가는데 회고를 쓰자니 근속 기간이 빈약한 것 같아 최근 제가 진행하고 있는 프로젝트에 관한 이야기를 작성해볼까 합니다.
+
+## 사전 지식
+
+제가 다니는 회사는 애드테크(ad-tech) 회사입니다.
+
+**‘적절한 광고를 적절한 사람들에게’** 노출하기 위해 사용되는 기술과 도구를 포괄하는 회사라고 할 수 있죠.
+쉬운 예로 우리가 애용하는 네이버에 처음 진입하면 나오는 배너가 있을겁니다.
+배너 광고가 나온다는건 **‘제품을 팔기 위해 광고를 하고 싶은 사람’** 과 **‘돈을 받고 광고 위치를 팔고 싶은 사람’** 간의 계약 하에 노출되는 것을 의미합니다.
+그리고 계약 과정에서 돈을 지불한 양 쪽은 단순히 계약 과정만 도움을 받는 것이 아닌 광고가 제대로 노출되는지, 효율이 얼마나 나오는지 등 성과를 측정하고 싶을 겁니다.
+
+이러한 일련의 서비스들을 제공하는 회사로 이해해주시면 됩니다!
+
+## 글의 순서
+
+**발단 - 전개 - 위기(?) - 결말** 순으로 진행됩니다.
+
+## 발단
+
+**미디에이션(mediation)** 이란 개념이 있습니다.
+
+둘 이상의 광고 제공 업체로부터 광고 콘텐츠를 임의의 우선순위에 따라 가져올 수 있는 서비스입니다.
+광고 제공 업체는 각자만의 광고 제공 방식을 스크립트로 제공합니다.
+스크립트 자체는 고정된 텍스트이므로 그 안에 들어가는 키나 우선순위에 따른 업체의 순서만 변경하면 되는 간단한 작업이지만, 문제는 이 작업을 **‘손수’** 하고 있었던 것이었습니다.
+매번 이전에 작성한 **스크립트를 복사**하고 **직접 타이핑**하는 과정을 거치다보니 시간도 많이 소요되고 휴먼 에러가 발생할 가능성이 있었습니다.
+그래서 이 과정을 보다 효율적으로 개선할 수 있는 **생성 프로그램**에 대해 제안했고, 마침 이러한 니즈가 있었던 개발실의 승인에 따라 프로젝트를 진행하게 되었습니다.
+
+## 전개
+
+### 1. 기획 ✏️
+
+기획은 간단했습니다.
+
+- 고정된 스크립트가 있고
+- id와 같이 변하는 값을 직접 입력한 다음
+- 그 스크립트를 파일로 다운받거나 업로드할 수 있어야 한다.
+- 또한 필요한 코드는 복사할 수 있어야 한다.
+- 업로드하거나 다운받은 파일은 스크립트를 로드해 프리뷰를 볼 수 있어야 한다.
+
+### 2. 프로젝트 구성 🧾
+
+크게 **react(+ typescript), vite** 조합으로 구성했습니다.
+
+로컬에서 사용하는 프로젝트이고 빠른 빌드를 필요로 했기 때문에 이 조합을 선택했습니다.<br/>
+(뒤에 나오겠지만 이 프로젝트는 로컬에서 배포하는 방향으로 확장하게 됩니다 🫠)
+
+그 외 사용한 패키지와 사유는 다음과 같습니다.
+
+- **mui + @toolpad + @emotion/styled**
+  - 쉽게 UI를 구성할 수 있는 [mui](https://mui.com/material-ui/)를 선택했습니다.
+  - [@toolpad](https://mui.com/toolpad/core/introduction/)는 mui에서 제공하는 대시보드 라이브러리입니다.
+- **express, jszip, unzipper, mkdirp**
+  - 로컬 환경에서 파일을 디렉토리 형태로 다운받기 위해 사용했습니다.
+- **valtio**
+  - 전역 스토어 라이브러리로, 익숙하다는 장점과 [proxyMap](https://valtio.dev/docs/api/utils/proxyMap) 사용을 위해 채택했습니다.
+- **react-markdown, remark-gfm**
+  - 가이드 문서를 렌더하기 위해 사용했습니다.
+- **aws-amplify**
+  - 원래는 **@aws-sdk/client-s3** 패키지를 사용했지만, 배포를 [amplify](https://aws.amazon.com/ko/amplify/)로 하게 되면서 사용하게 되었습니다.
+
+### 3. 환경 구성 ⚙️
+
+모든 프로젝트의 시작은 환경 구성부터 시작하죠.<br/>
+우선 vite는 다음과 같이 구성했습니다.
+
+compression의 경우 금정민 님의 [웹사이트를 최적화시키는 3가지 기법: 코드 압축, 경량화, 난독화](https://mong-blog.tistory.com/entry/%EC%9B%B9%EC%82%AC%EC%9D%B4%ED%8A%B8%EB%A5%BC-%EC%B5%9C%EC%A0%81%ED%99%94%EC%8B%9C%ED%82%A4%EB%8A%94-3%EA%B0%80%EC%A7%80-%EA%B8%B0%EB%B2%95-%EC%BD%94%EB%93%9C-%EC%95%95%EC%B6%95-%EA%B2%BD%EB%9F%89%ED%99%94-%EB%82%9C%EB%8F%85%ED%99%94)를 참고했습니다. 감사합니다!
+
+```ts
+export default defineConfig({
+  plugins: [
+    react(), // React 지원 플러그인
+    tsconfigPaths(), // tsconfig.json 의 paths 설정을 사용하여 모듈 경로를 쉽게 설정
+    nodePolyfills(), // Node.js의 핵심 모듈 및 전역 변수 사용 가능 (예: Buffer, process)
+    compression({
+      verbose: true, // 콘솔에 압축 정보 출력
+      disable: false, // 플러그인 비활성화 여부
+      deleteOriginFile: false, // 원본 파일 삭제 여부
+      threshold: 10240, // 최소 파일 크기 (바이트 단위)
+      algorithm: 'gzip', // 압축 알고리즘 (gzip, brotliCompress 등)
+      ext: '.gz', // 압축 파일 확장자
+    }),
+  ],
+  server: {
+    port: 3000, // 개발 서버가 실행될 포트 번호
+    open: true, // 서버 실행 시 브라우저를 자동으로 열지 여부
+  },
+  define: {
+    ...(process.env.NODE_ENV === 'development' ? { global: 'window' } : {}),
+  },
+  resolve: {
+    alias: {
+      './runtimeConfig': './runtimeConfig.browser',
+      // 특정 경로를 브라우저 전용 파일로 매핑
+    },
+  },
+  build: {
+    sourcemap: true, // 빌드 결과물에 소스맵 생성
+    rollupOptions: {
+      output: {
+        // node_modules 내 각 라이브러리를 별도의 청크로 분리하여 캐싱 효율성 증대
+        manualChunks: (id) => {
+          if (id.indexOf('node_modules') !== -1) {
+            const modules = id.split('node_modules/').pop() ?? '';
+            const module = modules.split('/')[0];
+            return `vendor-${module}`;
+          }
+        },
+      },
+    },
+  },
+});
+```
+
+요약하자면 다음과 같습니다.
+
+- 빌드 시 압축한다.
+- 로컬 서버 포트는 3000으로 한다. (vite 기본 포트는 5173)
+- 브라우저 환경에서 `global` 변수를 안전하게 사용하며 브라우저와 Node.js 환경 간의 호환성을 보장한다.
+- 빌드 시 브라우저 내에서 디버깅이 가능하도록 소스맵을 추가한다.
+- 빌드 시 번들링을 최적화한다.
+
+**package.json**의 scripts는 다음과 같이 구성했습니다.
+
+```json
+  "scripts": {
+    "start": "concurrently \"yarn vite\" \"yarn server\"",
+    "vite": "vite",
+    "preview": "vite preview",
+    "server": "nodemon --exec node --import ./loader.mjs src/server/index.ts",
+    "build": "tsc -b && vite build",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\""
+  },
+```
+
+먼저 start 부분의 [concurrently](https://www.npmjs.com/package/concurrently)는 react와 express를 함께 실행하기 위해 사용했습니다.
+
+그 다음 server 쪽이 조금 다르게 느껴지실텐데, 이 부분에 대한 설명은 Chat GPT에게 잠시 넘기겠습니다.
+
+### 스크립트 분석
+
+1. **`nodemon`**
+ - 파일 변경 사항을 감지해 서버를 자동으로 재시작하는 유틸리티입니다.
+ - 개발 중 서버 코드를 수정할 때마다 수동으로 서버를 재시작하지 않아도 됩니다.
+2. **`-exec node`**
+ - `nodemon`이 감지한 변경 사항에 대해 실행할 명령어를 지정합니다.
+ - 여기서는 `node` 명령어로 서버를 실행하도록 설정했습니다.
+3. **`-import ./loader.mjs`**
+ - Node.js 18+에서 도입된 **`-import`** 옵션은 서버 실행 시 특정 파일을 먼저 불러오도록 합니다.
+ - *`loader.mjs`*는 서버 실행 전에 필요한 초기화 작업(예: 환경 변수 설정, 글로벌 확장, 의존성 로드 등)을 수행할 수 있는 초기화 파일입니다.
+4. **`src/server/index.ts`**
+ - 서버 애플리케이션의 진입점 파일입니다.
+ - TypeScript로 작성된 서버 코드를 실행하려는 의도입니다.
+
+### 이렇게 작성한 이유
+
+1. **개발 생산성 향상**
+ - `nodemon`은 서버 파일의 변경을 감지해 자동으로 재시작하므로, 코드를 수정한 후 매번 서버를 수동으로 재시작할 필요가 없습니다.
+2. **초기화 코드 관리**
+ - `-import ./loader.mjs`는 애플리케이션 실행 전에 초기 설정(예: 환경 변수 로드, Polyfill 추가, 커스텀 로더 설치)을 처리합니다.
+ - 초기화 파일을 분리하면 진입점 코드(`index.ts`)가 더 간결하고 유지보수하기 쉬워집니다.
+3. **TypeScript 파일 실행**
+ - Node.js는 TypeScript를 직접 실행할 수 없으므로 일반적으로 트랜스파일된 JavaScript를 실행합니다.
+ - 하지만 여기서는 `-exec` 옵션을 사용해 `node` 명령어를 확장하거나, 로더를 설정해 TypeScript 코드를 실행 가능하게 만들었을 가능성이 있습니다.
+ - *`ts-node`*나 **ESM 로더**를 사용했을 수도 있습니다.
+
+> 정리하자면, express 코드를 typescript로 작성하고 서버 코드 변경을 감지한다는 의도 하게 작성된 스크립트였습니다.
+
+위 설정 외에 eslint, prettier는 대부분 설정하는 값으로 지정해 넘어가도록 하겠습니다.<br/>
+아, 하나 더 설명하자면 저희 팀은 프로젝트 루트에 **.nvmrc**를 생성합니다. <br/>
+해당 프로젝트가 어떤 node 버전을 사용하는지 명시해 **개발 환경을 일관되게 유지**하고 **버전 충돌을 막기 위해서** 사용합니다.
+
+### 4. 디렉토리 구성 🌲
+
+디렉토리는 각 역할에 맞게 나눠 구성했습니다.
+
+```plaintext
+├── amplify
+├── public
+└── src
+     ├── apis
+     ├── components
+     ├── constants
+     ├── icons
+     ├── pages
+     ├── scripts
+     ├── server
+     ├── store
+     ├── styles
+     ├── types
+     ├── utils
+     ├── App.tsx
+     └── main.tsx
+```
+
+- **amplify**
+  - aws amplify의 백엔드 구성을 위한 디렉토리입니다.
+- **public**
+  - favicon과 같은 정적 에셋을 보관합니다.
+- **apis**
+  - express api를 구성하고 있습니다.
+- **components**
+  - UI 단위로 나눈 컴포넌트로 구성되어 있습니다.
+- **constants**
+  - 반복 사용하는 상수 위주로 구성되어 있습니다.
+- **icons**
+  - [@mui/icons-material](https://mui.com/material-ui/material-icons/) 패키지에서 필요한 아이콘들만 import하고 있습니다.
+- **pages**
+  - 메인 페이지와 가이드 문서 페이지로 구성되어 있습니다.
+- **scripts**
+  - 스크립트 생성을 위한 정적 텍스트들을 보관하고 있습니다.
+  - prop으로 각 스크립트에 필요한 input 값을 받아 리턴합니다.
+- **server**
+  - express 서버 로직이 구성되어 있습니다.
+- **store**
+  - 전역 스토어(valtio)를 구성하고 있습니다.
+- **styles**
+  - 전역 스타일을 구성하고 있습니다.
+  - 폰트, reset과 같은 스타일을 담고 있습니다.
+- **types**
+  - 반복 사용하는 타입 위주로 구성되어 있습니다.
+- **utils**
+  - 반복 사용하거나 컴포넌트를 복잡하게 하는 로직들을 담고 있습니다.
+
+### 5. 메인 🏠
+
+첫 화면(가이드 페이지를 빼면 유일하긴 하지만)을 구성하는 메인 페이지의 구조입니다. <br/>
+간단합니다.<br/>
+(물결 표시로 된 부분은 회사 정보를 포함하고 있어 임의로 추가했습니다)
+
+```tsx
+import { OS, Tabs, Input, Title, Script, Network, Preview, Buttons, Container } from '@/components';
+
+const Main = () => {
+  return (
+    <>
+      <Title>1. 필수값을 입력하세요.</Title>
+      <Container>
+        <Input required label="~" />
+        <Input required label="~" type="number" />
+        <Input required label="~" type="number" />
+        <Input required label="~" type="number" />
+      </Container>
+
+      <Title>2. 운영체제를 선택하세요.</Title>
+      <Container>
+        <OS />
+      </Container>
+
+      <Title>3. 입력할 스크립트를 선택해주세요.</Title>
+      <Container direction="column">
+        <Option target="~" />
+        <Option target="~" />
+      </Container>
+
+      <Title>4. 스크립트를 완성해주세요.</Title>
+      <Container direction="column">
+        <Tabs />
+        <Script />
+      </Container>
+
+      <Title>5. 필요한 버튼을 클릭하세요.</Title>
+      <Container>
+        <Buttons />
+      </Container>
+
+      <Preview />
+    </>
+  );
+};
+
+export default Main;
+```
+
+## 6. 기능 구현 🔧
+
+구현한 여러 기능들이 있지만 모두 작성하기엔 너무 길어 일부만 소개해드리고자 합니다.
+
+**1. 복사 기능**
+
+복사 기능은 [Clipboard API](https://developer.mozilla.org/ko/docs/Web/API/Clipboard_API)를 사용했습니다. 일부 구형 브라우저에서는 동작하지 않지만, 사내에서만 사용할 예정이기 때문에 간단히 이 api를 사용했습니다.
+
+```ts
+export const copyScript = (script) => {
+  try {
+    navigator.clipboard.writeText(script).then(() => {
+      alert('스크립트가 복사되었습니다.');
+    });
+  } catch (error) {
+    console.error('Copy error: ', error);
+  }
+};
+```
+
+**2. 다운로드 기능**
+
+다운로드 기능을 설명드리기 앞서 간단히 흐름을 도식화하면 다음과 같습니다.
+
+<Image src={downloadImage} width={800} height={800} alt='도식' />
+
+먼저 폴더 구성과 압축을 위해 [JSZip](https://www.npmjs.com/package/jszip)이라는 라이브러리를 사용합니다.<br/>
+**folder, file, generateAsync** 와 같은 메서드로 간단하게 파일, 폴더 구성 및 압축 생성을 할 수 있습니다.
+
+간단히 예시를 들어볼까요?
+
+```ts
+const zip = new JSZip();
+
+const folder = zip.folder('[폴더명]');
+
+folder.file('[파일명].[파일 확장자]', [코드]);
+
+await zip.generateAsync({ type: [타입] });
+```
+
+**new JSZip()** 으로 zip을 생성해준 다음 generateAsync하기 전까지 폴더와 파일을 구성해주면 됩니다. <br/>
+그 다음 express 서버에 전송하기 위해 미리 구성해둔 api 메서드로 zip 파일 코드를 전달합니다.
+
+```ts
+await api.post({
+  path: '/download',
+  body: JSON.stringify({
+    name: '[파일명].zip',
+    content: zip,
+  }),
+});
+```
+
+서버(express)를 사용한 이유는 fs로 파일을 조작하고 특정한 경로에 저장하기 위해서였습니다.<br/>
+서버 쪽 코드는 다음과 같습니다.
+
+```ts
+app.post('/download', async (req: Request, res: Response) => {
+  const { name, content } = req.body;
+
+  // 1. 경로 설정
+  const path = path.join(__dirname, '[폴더명]');
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path);
+  }
+
+  // 2. 압축 파일 다운로드
+  const filePath = path.join(path, name);
+  fs.writeFileSync(filePath, Buffer.from(content, 'base64'));
+
+  // 3. 압축 해제 경로 설정
+  const extractPath = path.join(path, path.basename(name, '.zip')); // 파일명에서 확장자를 제거한 폴더
+
+  if (!fs.existsSync(extractPath)) {
+    fs.mkdirSync(extractPath);
+  }
+
+  // 4. 압축 풀기
+  fs.createReadStream(filePath)
+    .pipe(unzipper.Parse())
+    .on('entry', async (entry) => {
+      const fullPath = path.join(path, entry.path);
+
+      if (entry.type === 'Directory') {
+        fs.mkdirSync(fullPath, { recursive: true }); // 디렉토리 생성
+        entry.autodrain(); // 디렉토리는 내용 없이 무시
+      } else {
+        // 파일을 포함한 전체 경로가 존재하도록 디렉토리 생성
+        fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+        entry.pipe(fs.createWriteStream(fullPath)); // 파일 저장
+      }
+    })
+    // 5. 압축 파일 삭제
+    .on('close', () => {
+      fs.unlinkSync(filePath);
+      console.log(`Unzipped ${fileName} to ${extractPath}`);
+      res.status(200).send('다운로드 성공!');
+    })
+    .on('error', (err: Error) => {
+      console.error('[압축 해제 에러]', err);
+      res.status(500).send('다운로드에 실패했습니다.');
+    });
+});
+```
+
+방식은 위 도식과 같은데 순서대로 설명하면 다음과 같습니다.
+
+1. 먼저 프로젝트 내 저장할 **압축 파일 경로를 지정**합니다. 없으면 **폴더를 추가**해줍니다.<br/>
+    a. 프로젝트 내 경로를 지정하려는 이유는 **프리뷰** 기능을 위해서입니다.
+3. 해당 경로에 content를 압축 파일로 **다운로드**합니다.
+4. **압축 해제 경로를 지정**합니다. 압축 파일과 동일한 이름의 디렉토리에 저장할겁니다.
+5. 지정한 경로에 **압축을 해제**합니다.<br/>
+    a. 이 때 [unzipper](https://www.npmjs.com/package/unzipper) 라는 라이브러리를 사용했습니다.<br/>
+    b. 중첩된 파일과 폴더 생성을 위해 fs.mkdirSync에 recursive 속성을 추가했습니다.
+8. 압축 해제를 마치면 압축 파일을 삭제합니다.
+<br/>
+
+다음 **업로드 기능**부터는 aws에 대한 설명이 필요해 다음 글에서 이어 작성하겠습니다.
+
+### 위기 - 결말은 2부에서 진행됩니다
