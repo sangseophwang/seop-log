@@ -53,7 +53,7 @@ export const metadata = {
 
 ### 2. 프로젝트 구성 🧾
 
-크게 **react(+ typescript), vite** 조합으로 구성했습니다.
+크게 **react(+ TypeScript), vite** 조합으로 구성했습니다.
 
 로컬에서 사용하는 프로젝트이고 빠른 빌드를 필요로 했기 때문에 이 조합을 선택했습니다.<br/>
 (뒤에 나오겠지만 이 프로젝트는 로컬에서 배포하는 방향으로 확장하게 됩니다 🫠)
@@ -63,7 +63,7 @@ export const metadata = {
 - **mui + @toolpad + @emotion/styled**
   - 쉽게 UI를 구성할 수 있는 [mui](https://mui.com/material-ui/)를 선택했습니다.
   - [@toolpad](https://mui.com/toolpad/core/introduction/)는 mui에서 제공하는 대시보드 라이브러리입니다.
-- **express, jszip, unzipper, mkdirp**
+- **express, jszip, unzipper**
   - 로컬 환경에서 파일을 디렉토리 형태로 다운받기 위해 사용했습니다.
 - **valtio**
   - 전역 스토어 라이브러리로, 익숙하다는 장점과 [proxyMap](https://valtio.dev/docs/api/utils/proxyMap) 사용을 위해 채택했습니다.
@@ -178,7 +178,7 @@ export default defineConfig({
  - 하지만 여기서는 `-exec` 옵션을 사용해 `node` 명령어를 확장하거나, 로더를 설정해 TypeScript 코드를 실행 가능하게 만들었을 가능성이 있습니다.
  - *`ts-node`*나 **ESM 로더**를 사용했을 수도 있습니다.
 
-> 정리하자면, express 코드를 typescript로 작성하고 서버 코드 변경을 감지한다는 의도 하게 작성된 스크립트였습니다.
+> 정리하자면, express 코드를 TypeScript로 작성하고 서버 코드 변경을 감지한다는 의도 하게 작성된 스크립트였습니다.
 
 위 설정 외에 eslint, prettier는 대부분 설정하는 값으로 지정해 넘어가도록 하겠습니다.<br/>
 아, 하나 더 설명하자면 저희 팀은 프로젝트 루트에 **.nvmrc**를 생성합니다. <br/>
@@ -404,6 +404,6 @@ app.post('/download', async (req: Request, res: Response) => {
 8. 압축 해제를 마치면 압축 파일을 삭제합니다.
 <br/>
 
-다음 **업로드 기능**부터는 aws에 대한 설명이 필요해 다음 글에서 이어 작성하겠습니다.
+**업로드 기능**부터는 aws에 대한 설명이 필요해 다음 글에서 이어 작성하겠습니다.
 
 ### 위기 - 결말은 2부에서 진행됩니다
