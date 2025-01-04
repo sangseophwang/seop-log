@@ -1,0 +1,307 @@
+import Image from "next/image";
+import Image1 from "../image/dev/script-generator-part-2/1.png";
+import Image2 from "../image/dev/script-generator-part-2/2.png";
+import Image3 from "../image/dev/script-generator-part-2/3.png";
+import Image4 from "../image/dev/script-generator-part-2/4.png";
+
+export const metadata = {
+  title: '스크립트 생성기 프로젝트_part.2',
+  description: '사내 프로젝트인 스크립트 생성기 제작 과정, 마지막 이야기',
+  date: '2025-01-04 14:30:00'
+}
+
+## 지난 화 요약
+
+- 입사 후 첫 프로젝트로 스크립트를 수동으로 작성하던 기존 방식을 **자동화**할 수 있는 애플리케이션을 제안했습니다.
+- **프로젝트 구성, 환경 설정, 그리고 구현한 기능 중 복사, 스크립트 다운로드 기능**을 설명했습니다.
+- 지난 화 내용이 궁금하신 분들은 [여기](https://seop-log.vercel.app/post/dev/script-generator-part-1)서 확인하실 수 있습니다.
+- 이번 편은 `발단 - 전개 - 위기 - 결말` 중 위기, 결말을 다뤘습니다.
+
+## 위기
+
+처음 프로젝트의 목적은 스크립트를 제작하는 과정을 최소화하는 것이었습니다.
+그래서 몇 가지 입력값으로 생성한 스크립트를 다운로드하거나 일부 코드를 복사하는 기능까지 구현하는 것이 목표였습니다.
+
+그렇게 프로젝트 구현 후 첫 리뷰를 진행했을 때 다음과 같은 피드백을 듣게 되었습니다.
+
+- 스크립트 생성 프로세스는 운영 측에서 요청하고 개발 측에서 작업하는 방식이다.
+- 아예 이 모든 과정을 운영 측에서 담당할 수 있게 프로젝트를 확장하면 좋을 것 같다.
+
+즉, 이 모든 과정을 개발자가 아니어도 쉽게 다룰 수 있는 툴로 개선해야 하는 새로운 목표가 주어졌고, 이에 새로운 기능 명세를 정리해 개발할 필요가 있었습니다.
+
+추가된 기능 명세는 다음과 같습니다.
+
+**1. 핵심 기능**
+    - 애플리케이션에서 S3로 업로드가 가능해야 한다.
+    - 업로드 시 기존 파일이 존재하는 경우 CloudFront에서 캐시 무효화를 실행해야 한다.
+    - 업로드한 스크립트를 프리뷰로 볼 수 있어야 한다.
+
+**2. 편의 기능**
+  - 업로드 여부를 알림 형태로 확인할 수 있어야 한다.
+  - 엑셀 시트에서 각 항목을 복사해 붙여넣는 대신 행을 복사해 붙여넣을 수 있어야 한다.
+
+도식화하면 대략 이렇습니다.
+
+<Image src={Image1} width={800} height={800} alt='도식1' />
+
+이제 명세도 정리됐으니 개발에 들어가야겠죠?
+
+### 1. S3 업로드 기능
+
+[aws-sdk/client-s3](https://www.npmjs.com/package/@aws-sdk/client-s3) 패키지를 사용해 업로드 기능을 구현했습니다.
+
+```jsx
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+
+// S3 클라이언트 생성
+const s3 = await new S3Client({
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    });
+}
+
+// S3 업로드
+const result = await s3.send(
+       new PutObjectCommand({
+          Bucket,
+          Key,
+          Body,
+          ContentType,
+        }),
+);
+
+console.log('File uploaded successfully:', result);
+```
+
+위 코드는 초기에 작성한 업로드 방식입니다.
+
+초기 방식은 위와 같이 S3Client 인스턴스 생성 시 credential로 **access key id, secret access key**를 전달해 업로드하는 방식이었습니다.
+access key id, secret access key는 AWS의 모든 서비스에 접근할 수 있는 권한이 있습니다.
+이 값을 사용하려면 환경변수 또는 amplify에 추가해야 하는데, 어떤 방식으로든 노출될 가능성이 있으며 만일 노출되는 경우 아래와 같은 사고가 발생할 수 있다는 것을 알게 되었습니다.
+
+- 내 돈을 들이지 않고 Bitcoin을 캘 수 있다.
+- 누군가의 패스워드를 변경 할 수 있다.
+- 맘에 안 드는 EC2 인스턴스를 삭제할 수 있다.
+- 맘에 안 드는 RDS 인스턴스를 삭제 할 수 있다.
+- 마음에 드는 Route 53 레코드를 삭제 할 수 있다.
+- 눈길이 가는 Redshift 클러스터를 삭제할 수 있다.
+- 잘 돌고 있는 EMR 클러스터를 삭제할 수 있다.
+- 뭔가 있어 보이는 S3 버킷을 지울 수 있다.
+
+따라서 위 방식 대신 **Cognito**를 활용한 임시 자격 증명을 통해 업로드하는 방식으로 변경했는데, 이 방식을 간단히 비유해보자면 아래와 같습니다.
+
+- 등록되어 있는 사용자로 로그인을 해서
+- **제한된 접근 권한**을 기반으로
+- 서비스 내 기능을 사용한다.
+
+이 과정을 간단히 도식화해보면 아래와 같습니다.
+
+<Image src={Image2} width={800} height={800} alt='도식2' />
+
+AWS에서의 과정은 회원가입과 가입한 유저의 권한 설정을 수동으로 해주는 것과 유사하다고 보시면 됩니다.
+
+이렇게 애플리케이션에서 AWS에 접근이 가능한 가상의 유저를 만든 다음 아래와 같이 권한을 가져올 수 있는 함수를 구성합니다.
+
+```jsx
+import {
+  CognitoIdentityProviderClient,
+  InitiateAuthCommand,
+} from '@aws-sdk/client-cognito-identity-provider';
+import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
+
+// Cognito 사용자 풀을 통한 토큰 가져오기
+export const authenticateUser = async (username: string, password: string) => {
+  const client = new CognitoIdentityProviderClient({ region });
+
+  const command = new InitiateAuthCommand({
+    AuthFlow: 'USER_PASSWORD_AUTH',
+    ClientId: AWS_USER_POOL_CLIENT_ID,
+    AuthParameters: { username, password },
+  });
+
+  try {
+    const data = await client.send(command);
+    return data.AuthenticationResult?.IdToken;
+  } catch (error) {
+    console.error('[Error during authentication]', error);
+  }
+};
+
+// Cognito 사용자 토큰을 통해 인증된 액세스 접근
+export const getAwsCredentials = async (idToken?: string) => {
+  return fromCognitoIdentityPool({
+    identityPoolId: AWS_IDENTITY_POOL_ID,
+    logins: {
+      [토큰 서명 키 URL]: idToken ?? '', // 사용자 풀 로그인 정보
+    },
+    clientConfig: { region },
+  });
+};
+
+```
+
+그리고 위 함수를 통해 아래와 같이 권한을 가져오면 제가 필요로 하는 S3, CloudFront 접근이 가능하게 됩니다.
+
+```jsx
+const idToken = await authenticateUser(AWS_USERNAME, AWS_PASSWORD);
+
+const credentials = await getAwsCredentials(idToken);
+```
+
+이제 이 권한을 가지고 S3에 디렉토리를 업로드하면 됩니다!
+
+하지만 이미 업로드된 디렉토리는 **캐시 무효화를 트리거해줘야 새로 업로드한 디렉토리가 서비스에 반영되기 때문**에 이 과정도 함께 추가해주겠습니다.
+
+<Image src={Image3} width={800} height={800} alt='도식3' />
+
+먼저, S3에 접근해 업로드하려는 디렉토리가 이미 존재하는지 확인합니다.
+
+```jsx
+const idToken = await authenticateUser(AWS_USERNAME, AWS_PASSWORD);
+const credentials = await getAwsCredentials(idToken);
+
+const s3 = new S3Client({ region, credentials });
+
+const s3Object = await s3.send(
+   new ListObjectsV2Command({
+      Bucket: AWS_BUCKET_NAME,
+      Prefix: [업로드하려는 디렉토리 경로],
+   }),
+);
+
+const isExistingS3Object = !!s3Object.KeyCount;
+```
+
+`isExistingS3Object` 변수는 잠시 두고 업로드를 진행합니다.
+
+업로드할 파일들은 JSZip으로 디렉토리를 구성한 후 압축 형태를 제거한 뒤 파일 단위로 디렉토리 계층 구조에 맞춰 업로드합니다.
+
+생성한 스크립트 디렉토리에는 html과 javascript 파일이 섞여있기 때문에 각각 ContentType을 분리해 업로드합니다.
+
+```jsx
+const scriptZip = await createScriptZip(params);
+const scriptFiles = await extractZipWithJSZip(scriptZip);
+
+for (const { path, file } of scriptFiles) {
+  const buffer = await file.async('nodebuffer');
+
+  const isJavaScriptType = path.endsWith('.js');
+
+  const result = await s3.send(
+     new PutObjectCommand({
+        Bucket: [업로드할 버킷명],
+        Key: [업로드할 경로],
+        Body: buffer,
+        ContentType: isJavaScriptType ? 'application/javascript' : 'text/html',
+     }),
+  );
+
+  console.log('File uploaded successfully:', result);
+}
+```
+
+업로드를 마쳤으면 캐시 무효화 필요 여부 조건에 따라 **CloudFront**를 실행합니다.
+
+```jsx
+if (isExistingS3Object) {
+      // CloudFront 클라이언트 생성
+      const cloudfront = new CloudFrontClient({ region, credentials });
+
+      // CloudFront invalidation
+      const data = await cloudfront.send(
+        new CreateInvalidationCommand({
+          DistributionId: AWS_CLOUDFRONT_DISTRIBUTION_ID,
+          InvalidationBatch: {
+            CallerReference: `${Date.now()}`, // 고유한 참조 값
+            Paths: {
+              Quantity: 1,
+              Items: [`/${s3Path}/*`],
+            },
+          },
+        }),
+      );
+
+      console.log('File update requested:', data);
+}
+```
+
+여기까지 진행하면 업로드와 관련된 기능이 마무리됩니다!
+
+### 2. 슬랙 알림 기능
+
+하지만 생각해보면, 이 업로드 기능은 운영 파트에서 사용할 예정이기 때문에 **언제, 무엇을 업로드했는지, 신규 업로드인지 수정 업로드인지** 등을 F/U할 수 있는 장치가 필요했습니다.
+그래서 업로드를 마친 직후 업로드 상태에 따라 슬랙 채널에 알림을 보낼 수 있는 기능을 추가로 작업했습니다.
+
+알림 기능은 슬랙의 [incoming webhook](https://api.slack.com/messaging/webhooks)을 사용했습니다.
+
+```jsx
+await api
+      .post({
+        url: SLACK_URL,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: JSON.stringify({
+          attachments: [
+            {
+              color: [신규, 수정 업로드에 따른 컬러 적용],
+              pretext: [설명글],
+              title: [신규 업로드 or 수정 업로드 텍스트],
+              title_link: [업로드한 S3 링크],
+              text: [업로드 내역 텍스트],
+              footer,
+              footer_icon,
+              ts: Date.now(),
+            },
+          ],
+        }),
+      })
+      .then(() => alert([ 신규, 수정 업로드에 따른 브라우저 안내 메세지 ]));
+  } catch (error) {
+    console.error('Upload error: ', error);
+  }
+};
+```
+
+위와 같이 조건에 따른 슬랙 템플릿을 구성하면 아래와 같이 지정한 채널에 알림이 오게 됩니다.
+
+<Image src={Image4} width={800} height={800} alt='이미지1' />
+
+### 3. 텍스트 붙여넣기 기능
+
+스크립트 제작을 위해 엑셀 시트에 있는 값들을 직접 각 입력 항목에 작성하거나 붙여넣기해야 합니다.
+하지만 매번 **시트 - 애플리케이션을 왔다갔다하며 한 항목씩 복사해서 붙여넣는 과정**은 꽤 비효율적이라 생각했습니다.
+그래서 이를 위해 초기에는 붙여넣기 버튼 클릭 시 모달이 노출되고, 모달에 있는 입력 항목에 연속된 엑셀 시트 행을 복사해 붙여넣으면 텍스트를 파싱해 각 입력 항목에 적용되는 방식을 사용했습니다.
+
+그런데 막상 써보니 `버튼 클릭 - 모달 노출 - 텍스트 복사 - 확인 버튼 클릭`  이라는 과정도 비효율적이라는 생각이 들었습니다. 시트에서 행을 복사하고 버튼을 클릭하면 바로 각 입력 항목에 적용되면 더 간편하겠다는 생각에 Clipboard API의 readText 메소드를 사용하기로 했습니다.
+
+```jsx
+  const handlePaste = async () => {
+    try {
+      // 클립보드에서 텍스트 가져오기
+      const text = await navigator.clipboard.readText();
+
+      // 공백이 한 칸 이상이기 때문에 정규식으로 처리
+      const [a, b, c] = text.split(/\s+/);
+
+      if (!a || !b || !c) {
+        alert('붙여넣기에 실패했습니다. 시트를 올바르게 복사했는지 확인하세요.');
+        return;
+      }
+
+      setStore({ a, b, c });
+    } catch (error) {
+      console.error('[Paste failed]', (error as Error).message);
+    }
+  };
+```
+
+### 결말
+
+이렇게 약 2달에 걸쳐 작업한 프로젝트를 얼추(?) 마무리할 수 있었습니다.
+
+위에 적은 기능들과 코드들을 간단하게 작성했지만, 사실 작업하면서 참 많은 시행착오를 겪고 고민을 했었습니다.
+도메인에 익숙하지도 않고 AWS는 사용해본 적이 없어 더더욱 낯선 상황에서 문서를 보고 GPT에게 물어보며 떠듬떠듬 작업했던 지난 날들이 떠오릅니다.
+그래도 이렇게 고생한만큼 한 작업에 **30분 정도의 개발실 리소스와 운영팀의 업무 요청 리소스**가 들어갔던 프로세스를 운영팀의 **2분 남짓한 과정**을 통해 관리할 수 있도록 개선했다는 사실은 **개발자로써, 조직의 일원으로써** 참 뿌듯한 일이 아닐까 싶습니다.
+앞으로 여러 업무를 담당하게 되겠지만 이번 프로젝트와 같이 사내 생산성을 높이는 작업에 대한 고민을 계속 이어나가보자 합니다.
