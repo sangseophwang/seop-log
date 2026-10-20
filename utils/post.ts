@@ -3,6 +3,7 @@ import path from 'path';
 import type { MDXContent } from 'mdx/types';
 
 import { PostData } from '@/types/post';
+import { parseDate } from '@/utils/date';
 
 interface PostModule {
   default: MDXContent;
@@ -37,6 +38,6 @@ export const getSortedPostData = async ({ category }: { category: string }) => {
 
   // 날짜를 기준으로 포스트 데이터를 정렬
   return allPostsData.sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime(); // 날짜를 Date 객체로 변환하여 비교
+    return parseDate(b.date).getTime() - parseDate(a.date).getTime(); // 날짜를 Date 객체로 변환하여 비교
   });
 };

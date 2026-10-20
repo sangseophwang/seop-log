@@ -7,6 +7,7 @@ import Comment from '@/components/Comment';
 
 import { headerMeta } from '@/constants/header';
 import { openGraph } from '@/constants/meta';
+import { parseDate } from '@/utils/date';
 import { getPost, getSortedPostData } from '@/utils/post';
 
 export async function generateStaticParams() {
@@ -38,7 +39,7 @@ export async function generateMetadata({
       title: metadata.title,
       description: metadata.description,
       url,
-      publishedTime: new Date(metadata.date).toISOString(),
+      publishedTime: parseDate(metadata.date).toISOString(),
       images: openGraph.images,
     },
   };

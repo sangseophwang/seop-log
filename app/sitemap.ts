@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { headerMeta } from '@/constants/header';
 import { site } from '@/constants/meta';
+import { parseDate } from '@/utils/date';
 import { getSortedPostData } from '@/utils/post';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -17,13 +18,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return {
       url: new URL(`/${category}`, site.url).href,
-      lastModified: new Date(latestPost.date),
+      lastModified: parseDate(latestPost.date),
     };
   });
 
   const postUrls = postsByCategory.flat().map(({ category, id, date }) => ({
     url: new URL(`/post/${category}/${id}`, site.url).href,
-    lastModified: new Date(date),
+    lastModified: parseDate(date),
   }));
 
   return [
