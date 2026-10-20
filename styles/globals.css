@@ -8,7 +8,7 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-    --font-sans: var(--font-pretendard), 'Helvetica Neue', -apple-system, sans-serif;
+    --font-sans: 'Pretendard Variable', 'Helvetica Neue', -apple-system, sans-serif;
 }
 
 /* v4 기본값(cursor: default)이 아닌 v3처럼 버튼에 pointer 커서를 유지한다. */
