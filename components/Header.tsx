@@ -12,14 +12,14 @@ const Header = ({ title = '', subtitle }: HeaderProps) => {
       data-animate
     >
       <div>
-        <h2
+        <h1
           className={clsx(
             'text-2xl text-white md:text-3xl',
             breathney.className,
           )}
         >
           {title}
-        </h2>
+        </h1>
         {subtitle && (
           <p className="mt-5 text-sm font-medium text-slate-300">{subtitle}</p>
         )}

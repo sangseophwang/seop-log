@@ -23,7 +23,6 @@ const RootLayout = ({ children }: PropsWithChildren) => {
   return (
     <html lang="ko" data-scroll-behavior="smooth">
       <body className="dark bg-black">
-        <h1 className="sr-only">Seop Log</h1>
         <CommandMenuProvider>
           <BaseLayout>
             {children}

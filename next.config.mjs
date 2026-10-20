@@ -5,19 +5,7 @@ const withMDX = nextMDX({
   extension: /\.mdx?$/,
   options: {
     remarkPlugins: [],
-    rehypePlugins: [
-      'rehype-code-titles',
-      'rehype-prism-plus',
-      'rehype-slug',
-      [
-        'rehype-autolink-headings',
-        {
-          properties: {
-            className: ['anchor'],
-          },
-        },
-      ],
-    ],
+    rehypePlugins: ['rehype-code-titles', 'rehype-prism-plus', 'rehype-slug'],
   },
 });
 

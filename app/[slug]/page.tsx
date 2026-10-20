@@ -6,9 +6,16 @@ import { PageLayout } from '@/components/Layouts';
 import { headerMeta } from '@/constants/header';
 import { getSortedPostData } from '@/utils/post';
 
-export function generateStaticParams() {
-  const headerSlugs = Array.from(headerMeta.keys());
-  return headerSlugs.map((key) => ({ slug: key }));
+export async function generateStaticParams() {
+  const categories = Array.from(headerMeta.keys());
+  const posts = await Promise.all(
+    categories.map((category) => getSortedPostData({ category })),
+  );
+
+  // 글이 없는 카테고리는 페이지를 만들지 않는다 (dynamicParams = false 라서 404)
+  return categories
+    .filter((_, index) => posts[index].length > 0)
+    .map((category) => ({ slug: category }));
 }
 
 export async function generateMetadata({

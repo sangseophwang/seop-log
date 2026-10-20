@@ -12,10 +12,10 @@ const MenuButton = () => {
   return (
     <nav className="absolute top-10 left-5 z-20 flex space-x-2 md:top-5">
       <button
+        aria-label="Open Menu"
         className="rounded-lg border border-slate-800 bg-black p-2 text-base text-white transition-all hover:bg-slate-900"
         onClick={() => !isOpen && open()}
       >
-        <h3 className="sr-only">Open Menu</h3>
         <MenuIcon />
       </button>
     </nav>

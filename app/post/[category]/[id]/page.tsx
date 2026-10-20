@@ -6,7 +6,6 @@ import { Post } from '@/components';
 import Comment from '@/components/Comment';
 
 import { headerMeta } from '@/constants/header';
-import { openGraph } from '@/constants/meta';
 import { parseDate } from '@/utils/date';
 import { getPost, getSortedPostData } from '@/utils/post';
 
@@ -16,19 +15,15 @@ export async function generateStaticParams() {
     categories.map((category) => getSortedPostData({ category })),
   );
 
-  return posts.flat().map(({ category, id }) => ({
-    slug: [category, id],
-  }));
+  return posts.flat().map(({ category, id }) => ({ category, id }));
 }
 
 export async function generateMetadata({
   params,
-}: PageProps<'/post/[...slug]'>): Promise<Metadata> {
-  const {
-    slug: [category, file],
-  } = await params;
-  const { metadata } = await getPost(category, file);
-  const url = `/post/${category}/${file}`;
+}: PageProps<'/post/[category]/[id]'>): Promise<Metadata> {
+  const { category, id } = await params;
+  const { metadata } = await getPost(category, id);
+  const url = `/post/${category}/${id}`;
 
   return {
     title: metadata.title,
@@ -40,15 +35,12 @@ export async function generateMetadata({
       description: metadata.description,
       url,
       publishedTime: parseDate(metadata.date).toISOString(),
-      images: openGraph.images,
     },
   };
 }
 
-const PostPage = async ({ params }: PageProps<'/post/[...slug]'>) => {
-  const {
-    slug: [category, file],
-  } = await params;
+const PostPage = async ({ params }: PageProps<'/post/[category]/[id]'>) => {
+  const { category, id } = await params;
 
   return (
     <PageLayout minHeight>
@@ -58,7 +50,7 @@ const PostPage = async ({ params }: PageProps<'/post/[...slug]'>) => {
         data-animate
         data-animate-speed="fast"
       >
-        <Post category={category} file={file} />
+        <Post category={category} file={id} />
         <Comment className="mx-auto mt-20" />
       </article>
     </PageLayout>

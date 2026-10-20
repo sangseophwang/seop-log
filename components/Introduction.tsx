@@ -3,7 +3,7 @@ import { CommandButton } from '@/components/Buttons';
 
 const Introduction = () => {
   return (
-    <main
+    <div
       className="max-w-none font-normal text-slate-200"
       data-animate
       data-animate-speed="slow"
@@ -39,7 +39,7 @@ const Introduction = () => {
       </div>
 
       <CommandButton />
-    </main>
+    </div>
   );
 };
 
