@@ -12,6 +12,8 @@ const withMDX = nextMDX({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  // Link href와 router.push에 없는 경로를 쓰면 타입 에러가 나도록 한다.
+  typedRoutes: true,
 };
 
 export default withMDX(nextConfig);

@@ -1,3 +1,4 @@
+import type { Route } from 'next';
 import Link from '@/components/Link';
 import Image, { ImageProps } from 'next/image';
 import { AnchorHTMLAttributes, ReactNode } from 'react';
@@ -13,7 +14,8 @@ interface RoundedImageProps extends ImageProps {
 
 const customLink = (props: CustomLinkProps) => {
   return (
-    <Link href={props.href}>
+    // 글 본문(MDX)의 링크는 임의의 문자열이라 typedRoutes 검사 대상에서 뺀다.
+    <Link href={props.href as Route}>
       {props.children}
       {props.href.startsWith('#') ? '' : '↗'}
     </Link>

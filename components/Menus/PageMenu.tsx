@@ -1,5 +1,6 @@
 'use client';
 
+import type { Route } from 'next';
 import { Command } from 'cmdk';
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -20,10 +21,10 @@ const PageMenu = () => {
   // router.push는 <Link>와 달리 미리 받아 두지 않으므로, 메뉴가 열리면 이동할 페이지를 prefetch 한다.
   useEffect(() => {
     if (!isOpen) return;
-    ['/', '/dev', '/life'].forEach((href) => router.prefetch(href));
+    (['/', '/dev', '/life'] as const).forEach((href) => router.prefetch(href));
   }, [isOpen, router]);
 
-  const route = (href: string) => {
+  const route = <T extends string>(href: Route<T>) => {
     router.push(href);
     close();
   };

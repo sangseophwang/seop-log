@@ -19,6 +19,9 @@ export const metadata: Metadata = Meta;
 
 export const dynamicParams = false;
 
+// 모든 페이지를 빌드할 때 정적으로 만든다. headers()처럼 요청마다 달라지는 코드가 들어오면 빌드가 실패한다.
+export const dynamic = 'error';
+
 const RootLayout = ({ children }: PropsWithChildren) => {
   return (
     <html lang="ko" data-scroll-behavior="smooth">
