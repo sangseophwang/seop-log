@@ -1,11 +1,23 @@
-@import 'prism.css';
-@import 'cmdk.css';
-@import 'blur-layer.css';
-@import 'intro-stage.css';
-@import 'animation.css';
+@import 'tailwindcss';
+@import './prism.css';
+@import './cmdk.css';
+@import './blur-layer.css';
+@import './intro-stage.css';
+@import './animation.css';
 
-@tailwind base;
-@tailwind utilities;
+@plugin '@tailwindcss/typography';
+
+@theme {
+    --font-sans: var(--font-pretendard), 'Helvetica Neue', -apple-system, sans-serif;
+}
+
+/* v4 기본값(cursor: default)이 아닌 v3처럼 버튼에 pointer 커서를 유지한다. */
+@layer base {
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+}
 
 html,
 body {
@@ -33,10 +45,10 @@ pre {
 }
 
 .blur-bg {
-    @apply opacity-80 blur default-transition;
+    @apply opacity-80 blur-sm default-transition;
 }
 
-.default-transition {
+@utility default-transition {
     @apply transition-all duration-300 ease-in-out;
 }
 

@@ -1,19 +1,16 @@
 import nextMDX from '@next/mdx';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeCodeTitles from 'rehype-code-titles';
-import rehypePrism from 'rehype-prism-plus';
-import rehypeSlug from 'rehype-slug';
 
+// Turbopack에서는 플러그인을 함수가 아닌 패키지 이름(문자열)으로 넘겨야 한다.
 const withMDX = nextMDX({
   extension: /\.mdx?$/,
   options: {
     remarkPlugins: [],
     rehypePlugins: [
-      rehypeCodeTitles,
-      rehypePrism,
-      rehypeSlug,
+      'rehype-code-titles',
+      'rehype-prism-plus',
+      'rehype-slug',
       [
-        rehypeAutolinkHeadings,
+        'rehype-autolink-headings',
         {
           properties: {
             className: ['anchor'],
@@ -27,11 +24,6 @@ const withMDX = nextMDX({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
-  webpack: (config) => {
-    config.resolve.fallback = { fs: false };
-
-    return config;
-  },
 };
 
 export default withMDX(nextConfig);

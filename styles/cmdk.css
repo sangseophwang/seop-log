@@ -1,7 +1,7 @@
 /* cmdk menu */
 
 .raycast [cmdk-root] {
-    @apply relative mx-auto w-full max-w-2xl rounded-xl border border-slate-700 bg-gradient-to-b from-[#141522]/95 to-[#000000]/95 py-2 shadow-lg;
+    @apply relative mx-auto w-full max-w-2xl rounded-xl border border-slate-700 bg-linear-to-b from-[#141522]/95 to-[#000000]/95 py-2 shadow-lg;
 }
 
 .raycast [cmdk-root]:before {
@@ -18,7 +18,7 @@
 }
 
 .raycast [cmdk-input] {
-    @apply w-full border-0 bg-[var(--bg)] px-4 py-2 text-[15px] text-white outline-none;
+    @apply w-full border-0 bg-(--bg) px-4 py-2 text-[15px] text-white outline-hidden;
 }
 
 .raycast [cmdk-input]::placeholder {

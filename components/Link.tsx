@@ -12,7 +12,7 @@ const Link = ({ className, href, children }: LinkProps) => {
     <NextLink
       className={clsx(
         className,
-        'default-transition underline underline-offset-4 transition-opacity hover:opacity-80',
+        'underline underline-offset-4 default-transition transition-opacity hover:opacity-80',
       )}
       href={href}
     >

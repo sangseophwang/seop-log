@@ -1,7 +1,7 @@
 'use client';
 
-import { ComponentType, useEffect, useState } from 'react';
-import { MDXComponents } from 'mdx/types';
+import { useEffect, useState } from 'react';
+import { MDXContent } from 'mdx/types';
 import { PostData } from '@/types/post';
 import { formatDate } from '@/utils/date';
 import { components } from '@/constants/mdx';
@@ -12,7 +12,7 @@ interface PostProps {
 }
 
 const Post = ({ category, file }: PostProps) => {
-  const [MDX, setMDX] = useState<ComponentType<MDXComponents> | null>(null);
+  const [MDX, setMDX] = useState<MDXContent | null>(null);
   const [metadata, setMetadata] = useState<PostData>();
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Post = ({ category, file }: PostProps) => {
         <h1 className="mb-0 text-2xl font-bold sm:text-3xl">
           {metadata.title}
         </h1>
-        <i className="mb-8 mt-2">{formatDate(metadata.date)}</i>
+        <i className="mt-2 mb-8">{formatDate(metadata.date)}</i>
       </header>
       <MDX components={components} />
     </>

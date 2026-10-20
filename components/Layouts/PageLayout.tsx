@@ -10,7 +10,7 @@ const PageLayout = ({ minHeight, children }: PageLayoutProps) => {
   return (
     <main
       id="main"
-      className={clsx('default-transition w-full px-6 py-16', {
+      className={clsx('w-full px-6 py-16 default-transition', {
         ['min-h-[90vh]']: minHeight,
       })}
     >

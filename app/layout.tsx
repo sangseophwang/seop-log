@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { PropsWithChildren } from 'react';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { Menu } from '@/components';
@@ -21,7 +21,11 @@ export const dynamicParams = false;
 
 const RootLayout = ({ children }: PropsWithChildren) => {
   return (
-    <html lang="ko" className={pretendard.className}>
+    <html
+      lang="ko"
+      className={pretendard.className}
+      data-scroll-behavior="smooth"
+    >
       <body className="dark bg-black">
         <h1 className="sr-only">Seop Log</h1>
         <CommandMenuProvider>

@@ -9,14 +9,9 @@ export function generateStaticParams() {
   return headerSlugs.map((key) => ({ slug: key }));
 }
 
-interface SlugPageProps {
-  params: {
-    slug: string;
-  };
-}
-
 // TODO: 각 페이지 meta 정보
-const SlugPage = ({ params: { slug: category } }: SlugPageProps) => {
+const SlugPage = async ({ params }: PageProps<'/[slug]'>) => {
+  const { slug: category } = await params;
   const { title, subtitle } = headerMeta.get(category) ?? {};
 
   const postData = getSortedPostData({ category });

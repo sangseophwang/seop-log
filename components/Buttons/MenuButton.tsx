@@ -10,7 +10,7 @@ const MenuButton = () => {
   const { isOpen, open } = useContext(MenuContext);
 
   return (
-    <nav className="absolute left-5 top-10 z-20 flex space-x-2 md:top-5">
+    <nav className="absolute top-10 left-5 z-20 flex space-x-2 md:top-5">
       <button
         className="rounded-lg border border-slate-800 bg-black p-2 text-base text-white transition-all hover:bg-slate-900"
         onClick={() => !isOpen && open()}

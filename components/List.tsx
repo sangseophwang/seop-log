@@ -29,10 +29,10 @@ const List = ({ data }: ListProps) => {
             >
               <div className="z-10 flex flex-col space-y-1">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
-                  <h3 className="ellipsis max-w-lg font-medium leading-4 text-white">
+                  <h3 className="ellipsis max-w-lg leading-4 font-medium text-white">
                     {title}
                   </h3>
-                  <i className="mb-1 mt-1 text-nowrap text-xs text-gray-500 sm:m-0 sm:text-[14px]">
+                  <i className="mt-1 mb-1 text-xs text-nowrap text-gray-500 sm:m-0 sm:text-[14px]">
                     {formatDate(date)}
                   </i>
                 </div>

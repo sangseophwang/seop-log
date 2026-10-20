@@ -8,7 +8,7 @@ interface HeaderProps {
 const Header = ({ title = '', subtitle }: HeaderProps) => {
   return (
     <header
-      className="mb-4 mt-6 flex items-center justify-between md:mb-8"
+      className="mt-6 mb-4 flex items-center justify-between md:mb-8"
       data-animate
       data-animate-speed="slow"
     >

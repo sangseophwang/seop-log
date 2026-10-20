@@ -15,17 +15,11 @@ export function generateStaticParams() {
   );
 }
 
-interface PostPageProps {
-  params: {
-    slug: string[];
-  };
-}
-
-const PostPage = ({
-  params: {
+const PostPage = async ({ params }: PageProps<'/post/[...slug]'>) => {
+  const {
     slug: [category, file],
-  },
-}: PostPageProps) => {
+  } = await params;
+
   return (
     <PageLayout minHeight>
       <div className="blur-layer" aria-hidden="true" />
