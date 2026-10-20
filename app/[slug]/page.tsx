@@ -1,5 +1,3 @@
-import { headers } from 'next/headers';
-
 import { Header, List } from '@/components';
 import { PageLayout } from '@/components/Layouts';
 
@@ -11,12 +9,14 @@ export function generateStaticParams() {
   return headerSlugs.map((key) => ({ slug: key }));
 }
 
-// TODO: 각 페이지 meta 정보
-const SlugPage = () => {
-  const headersList = headers();
-  const headerPathname = headersList.get('x-pathname') || '';
-  const category = headerPathname.substring(1);
+interface SlugPageProps {
+  params: {
+    slug: string;
+  };
+}
 
+// TODO: 각 페이지 meta 정보
+const SlugPage = ({ params: { slug: category } }: SlugPageProps) => {
   const { title, subtitle } = headerMeta.get(category) ?? {};
 
   const postData = getSortedPostData({ category });

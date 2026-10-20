@@ -28,6 +28,7 @@ const extractMetadata = (fileContents: string): PostData | null => {
 
 export const getSortedPostData = ({ category }: { category: string }) => {
   const postsDirectory = path.join(process.cwd(), `contents/${category}`); // Markdown 파일들이 있는 디렉토리 경로
+  if (!fs.existsSync(postsDirectory)) return []; // 아직 글이 없는 카테고리
   const fileNames = fs.readdirSync(postsDirectory); // 해당 디렉토리 내 파일 목록을 동기적으로 읽어옵니다.
 
   const allPostsData = fileNames.reduce<PostData[]>((acc, fileName) => {

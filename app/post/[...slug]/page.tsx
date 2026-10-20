@@ -3,6 +3,18 @@ import { PageLayout } from '@/components/Layouts';
 import { Post } from '@/components';
 import Comment from '@/components/Comment';
 
+import { headerMeta } from '@/constants/header';
+import { getSortedPostData } from '@/utils/post';
+
+export function generateStaticParams() {
+  const categories = Array.from(headerMeta.keys());
+  return categories.flatMap((category) =>
+    getSortedPostData({ category }).map(({ id }) => ({
+      slug: [category, id],
+    })),
+  );
+}
+
 interface PostPageProps {
   params: {
     slug: string[];
