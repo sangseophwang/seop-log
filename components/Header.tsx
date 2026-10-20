@@ -10,7 +10,6 @@ const Header = ({ title = '', subtitle }: HeaderProps) => {
     <header
       className="mt-6 mb-4 flex items-center justify-between md:mb-8"
       data-animate
-      data-animate-speed="slow"
     >
       <div>
         <h2

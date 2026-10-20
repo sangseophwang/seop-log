@@ -1,10 +1,15 @@
 'use client';
 
 import { Command } from 'cmdk';
+import { useContext } from 'react';
 
 import { GithubIcon, InstagramIcon, LinkedinIcon } from '@/components/Icons';
 
+import { MenuContext } from '@/providers';
+
 const SocialMenu = () => {
+  const { close } = useContext(MenuContext);
+
   const openLink = (href: string) => {
     window.open(href, '_blank');
     close();

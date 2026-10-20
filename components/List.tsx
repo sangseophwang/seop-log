@@ -15,11 +15,7 @@ interface ListProps {
  * */
 const List = ({ data }: ListProps) => {
   return (
-    <ul
-      className="mt-16 grid grid-cols-1 gap-6"
-      data-animate
-      data-animate-speed="slow"
-    >
+    <ul className="mt-16 grid grid-cols-1 gap-6" data-animate>
       {data.map(({ id, title, description, date, category }) => {
         return (
           <li key={id}>
