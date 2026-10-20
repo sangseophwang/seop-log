@@ -18,4 +18,10 @@ export const openGraph = {
   },
 };
 
-export const Meta = { ...site, openGraph };
+export const Meta = {
+  ...site,
+  // 글/카테고리 페이지의 상대 경로(canonical, og:url)를 절대 URL로 바꾸는 기준
+  metadataBase: new URL(site.url),
+  title: { default: site.title, template: `%s | ${site.title}` },
+  openGraph,
+};

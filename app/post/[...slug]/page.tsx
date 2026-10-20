@@ -1,18 +1,47 @@
+import type { Metadata } from 'next';
+
 import { PageLayout } from '@/components/Layouts';
 
 import { Post } from '@/components';
 import Comment from '@/components/Comment';
 
 import { headerMeta } from '@/constants/header';
-import { getSortedPostData } from '@/utils/post';
+import { openGraph } from '@/constants/meta';
+import { getPost, getSortedPostData } from '@/utils/post';
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   const categories = Array.from(headerMeta.keys());
-  return categories.flatMap((category) =>
-    getSortedPostData({ category }).map(({ id }) => ({
-      slug: [category, id],
-    })),
+  const posts = await Promise.all(
+    categories.map((category) => getSortedPostData({ category })),
   );
+
+  return posts.flat().map(({ category, id }) => ({
+    slug: [category, id],
+  }));
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps<'/post/[...slug]'>): Promise<Metadata> {
+  const {
+    slug: [category, file],
+  } = await params;
+  const { metadata } = await getPost(category, file);
+  const url = `/post/${category}/${file}`;
+
+  return {
+    title: metadata.title,
+    description: metadata.description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      title: metadata.title,
+      description: metadata.description,
+      url,
+      publishedTime: new Date(metadata.date).toISOString(),
+      images: openGraph.images,
+    },
+  };
 }
 
 const PostPage = async ({ params }: PageProps<'/post/[...slug]'>) => {

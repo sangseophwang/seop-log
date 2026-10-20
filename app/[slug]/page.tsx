@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 import { Header, List } from '@/components';
 import { PageLayout } from '@/components/Layouts';
 
@@ -9,12 +11,24 @@ export function generateStaticParams() {
   return headerSlugs.map((key) => ({ slug: key }));
 }
 
-// TODO: 각 페이지 meta 정보
+export async function generateMetadata({
+  params,
+}: PageProps<'/[slug]'>): Promise<Metadata> {
+  const { slug: category } = await params;
+  const { title, subtitle } = headerMeta.get(category) ?? {};
+
+  return {
+    title,
+    description: subtitle,
+    alternates: { canonical: `/${category}` },
+  };
+}
+
 const SlugPage = async ({ params }: PageProps<'/[slug]'>) => {
   const { slug: category } = await params;
   const { title, subtitle } = headerMeta.get(category) ?? {};
 
-  const postData = getSortedPostData({ category });
+  const postData = await getSortedPostData({ category });
 
   return (
     <PageLayout minHeight>
