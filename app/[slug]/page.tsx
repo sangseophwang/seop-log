@@ -4,6 +4,7 @@ import { Header, List } from '@/components';
 import { PageLayout } from '@/components/Layouts';
 
 import { headerMeta } from '@/constants/header';
+import { site } from '@/constants/meta';
 import { getSortedPostData } from '@/utils/post';
 
 export async function generateStaticParams() {
@@ -28,6 +29,11 @@ export async function generateMetadata({
     title,
     description: subtitle,
     alternates: { canonical: `/${category}` },
+    openGraph: {
+      title: `${title} | ${site.title}`,
+      description: subtitle,
+      url: `/${category}`,
+    },
   };
 }
 
