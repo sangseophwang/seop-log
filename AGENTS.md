@@ -43,3 +43,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 초안은 비공개 저장소 `seop-log-drafts`에 두고, 블로그 저장소 안의 `drafts/` 폴더로 내려받아 쓴다. `drafts/`는 `.gitignore`에 들어 있다.
 - 블로그 저장소는 공개 저장소다. 초안 파일을 `contents/`에 직접 복사하거나 커밋하지 않는다. 발행할 때만 `yarn publish-draft <category> <id>`로 옮긴다.
 - 초안은 개발 서버(`yarn dev`)에서만 보인다. `drafts/` 폴더의 글과 `draft: true`인 글은 배포 빌드에서 빠진다.
+- 글(MDX)의 코드 블록 언어 태그는 Prism(rehype-prism-plus)이 지원하는 이름만 쓴다(예: `bat`이 아니라 `batch`). 모르는 언어가 있으면 그 글의 컴파일이 실패하고, 초안이면 개발 서버의 글 목록까지 함께 깨진다. 지원 언어는 `node_modules/refractor/lang/`에서 확인한다.
