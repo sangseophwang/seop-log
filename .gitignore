@@ -43,3 +43,6 @@ types/next-env.d.ts
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# 블로그 초안: 비공개 저장소(seop-log-drafts)를 내려받는 폴더. 공개 저장소에 올리지 않는다.
+/drafts

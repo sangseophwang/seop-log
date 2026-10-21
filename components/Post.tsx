@@ -18,12 +18,20 @@ const Post = async ({ category, file }: PostProps) => {
   return (
     <>
       <header className="flex flex-col">
-        <NextLink
-          href={categoryHref}
-          className="not-prose mb-2 w-fit text-sm text-slate-400 transition-colors hover:text-slate-200"
-        >
-          {categoryTitle}
-        </NextLink>
+        <div className="not-prose mb-2 flex items-center gap-2">
+          <NextLink
+            href={categoryHref}
+            className="w-fit text-sm text-slate-400 transition-colors hover:text-slate-200"
+          >
+            {categoryTitle}
+          </NextLink>
+          {/* 초안은 개발 서버에서만 열린다 */}
+          {metadata.draft && (
+            <span className="rounded-sm border border-amber-500/60 px-1.5 text-xs text-amber-400">
+              초안
+            </span>
+          )}
+        </div>
         <h1 className="mb-0 text-2xl font-bold sm:text-3xl">
           {metadata.title}
         </h1>

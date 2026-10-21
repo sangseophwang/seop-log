@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "eslint . && next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "publish-draft": "node scripts/publish-draft.mjs"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

@@ -37,3 +37,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## 작업 흐름
 
 - main에서 바로 작업하지 않고 브랜치를 만든다. 브랜치를 푸시해 Vercel Preview 배포에서 확인한 뒤 main에 반영한다.
+
+## 초안 (비공개)
+
+- 초안은 비공개 저장소 `seop-log-drafts`에 두고, 블로그 저장소 안의 `drafts/` 폴더로 내려받아 쓴다. `drafts/`는 `.gitignore`에 들어 있다.
+- 블로그 저장소는 공개 저장소다. 초안 파일을 `contents/`에 직접 복사하거나 커밋하지 않는다. 발행할 때만 `yarn publish-draft <category> <id>`로 옮긴다.
+- 초안은 개발 서버(`yarn dev`)에서만 보인다. `drafts/` 폴더의 글과 `draft: true`인 글은 배포 빌드에서 빠진다.

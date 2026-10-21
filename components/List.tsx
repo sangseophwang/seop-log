@@ -16,7 +16,7 @@ interface ListProps {
 const List = ({ data }: ListProps) => {
   return (
     <ul className="mt-16 grid grid-cols-1 gap-6" data-animate>
-      {data.map(({ id, title, description, date, category }) => {
+      {data.map(({ id, title, description, date, category, draft }) => {
         return (
           <li key={id}>
             <Link
@@ -31,6 +31,12 @@ const List = ({ data }: ListProps) => {
                   <i className="mt-1 mb-1 text-xs text-nowrap text-gray-500 sm:m-0 sm:text-[14px]">
                     {formatDate(date)}
                   </i>
+                  {/* 초안은 개발 서버에서만 목록에 나온다 */}
+                  {draft && (
+                    <span className="w-fit rounded-sm border border-amber-500/60 px-1.5 text-xs text-amber-400 sm:ml-2">
+                      초안
+                    </span>
+                  )}
                 </div>
                 <span className="ellipsis max-w-lg text-gray-400">
                   {description}
