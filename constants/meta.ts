@@ -5,6 +5,17 @@ export const site = {
   url: 'https://seop-log.vercel.app/',
 };
 
+// 구조화 데이터(JSON-LD)의 작성자 정보
+export const author = {
+  '@type': 'Person',
+  name: 'SangSeop Hwang',
+  url: site.url,
+  sameAs: [
+    'https://github.com/sangseophwang',
+    'https://www.linkedin.com/in/sangseophwang',
+  ],
+};
+
 // 공유 이미지는 각 경로의 opengraph-image.tsx가 만든다.
 export const openGraph = {
   type: 'website',

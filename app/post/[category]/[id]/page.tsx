@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 
 import { PageLayout } from '@/components/Layouts';
 
-import { Post } from '@/components';
+import { JsonLd, Post } from '@/components';
 import Comment from '@/components/Comment';
 
 import { headerMeta } from '@/constants/header';
+import { author, site } from '@/constants/meta';
 import { parseDate } from '@/utils/date';
 import { getPost, getSortedPostData } from '@/utils/post';
 
@@ -41,9 +42,27 @@ export async function generateMetadata({
 
 const PostPage = async ({ params }: PageProps<'/post/[category]/[id]'>) => {
   const { category, id } = await params;
+  const { metadata } = await getPost(category, id);
+  const url = new URL(`/post/${category}/${id}`, site.url).href;
+  const publishedAt = parseDate(metadata.date).toISOString();
+
+  const blogPostingJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: metadata.title,
+    description: metadata.description,
+    datePublished: publishedAt,
+    dateModified: publishedAt,
+    inLanguage: 'ko-KR',
+    url,
+    mainEntityOfPage: url,
+    image: `${url}/opengraph-image`,
+    author,
+  };
 
   return (
     <PageLayout minHeight>
+      <JsonLd data={blogPostingJsonLd} />
       <div className="blur-layer" aria-hidden="true" />
       <article
         className="prose prose-invert"

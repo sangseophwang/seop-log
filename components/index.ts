@@ -1,5 +1,6 @@
 export { default as Header } from './Header';
 export { default as Introduction } from './Introduction';
+export { default as JsonLd } from './JsonLd';
 export { default as Link } from './Link';
 export { default as List } from './List';
 export { default as Menu } from './Menu';
