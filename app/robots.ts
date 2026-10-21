@@ -1,18 +1,16 @@
 import { site } from '@/constants/meta';
 
 export default function robots() {
-  // /_next/* 는 막지 않는다. 검색엔진이 페이지를 렌더링하려면 JS·CSS·이미지가 필요하다.
-  const disallow = ['/public/*', '/favicon.*'];
-
+  // 막는 경로를 두지 않는다. 검색엔진이 페이지를 렌더링하려면 /_next/* 의 JS·CSS·이미지가,
+  // 검색 결과에 아이콘을 보여 주려면 /favicon.ico 가 필요하다.
   const allAgent = {
     userAgent: '*',
     allow: '/',
-    disallow,
   };
 
   const facebookAgent = {
     userAgent: 'FacebookBot',
-    disallow,
+    allow: '/',
     crawlDelay: 30,
   };
 

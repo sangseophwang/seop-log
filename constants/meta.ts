@@ -25,6 +25,7 @@ export const openGraph = {
   title: homeTitle,
   description: site.description,
   url: site.url,
+  siteName: site.title,
 };
 
 export const Meta = {
