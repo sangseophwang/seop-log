@@ -19,4 +19,8 @@ export const Meta = {
   metadataBase: new URL(site.url),
   title: { default: site.title, template: `%s | ${site.title}` },
   openGraph,
+  // Google Search Console 소유 확인 (URL 접두어 속성, HTML 태그 방식)
+  verification: {
+    google: 'rdRMrLAwcZnG_kh32i1mzcROhzisC3CPZ9yvIA7FXFE',
+  },
 };
