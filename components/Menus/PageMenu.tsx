@@ -1,8 +1,9 @@
 'use client';
 
 import type { Route } from 'next';
+import NextLink from 'next/link';
 import { Command } from 'cmdk';
-import { useContext, useEffect } from 'react';
+import { ReactNode, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import {
@@ -13,6 +14,28 @@ import {
 } from '@/components/Icons';
 
 import { MenuContext } from '@/providers';
+
+// 크롤러가 따라갈 수 있도록 <a href>로 그리되, 실제 이동은 Command.Item의 onSelect가 맡는다.
+// (prefetch는 메뉴를 열 때 따로 하므로 끈다)
+const MenuLink = <T extends string>({
+  href,
+  children,
+}: {
+  href: Route<T>;
+  children: ReactNode;
+}) => {
+  return (
+    <NextLink
+      href={href}
+      prefetch={false}
+      tabIndex={-1}
+      className="flex h-full w-full items-center gap-2"
+      onClick={(event) => event.preventDefault()}
+    >
+      {children}
+    </NextLink>
+  );
+};
 
 const PageMenu = () => {
   const router = useRouter();
@@ -31,16 +54,22 @@ const PageMenu = () => {
   return (
     <Command.Group heading="Pages">
       <Command.Item value="Home" onSelect={() => route('/')}>
-        <HomeIcon className="h-4 w-4" />
-        Home
+        <MenuLink href="/">
+          <HomeIcon className="h-4 w-4" />
+          Home
+        </MenuLink>
       </Command.Item>
       <Command.Item value="Dev" onSelect={() => route('/dev')}>
-        <CodeIcon className="h-4 w-4" />
-        Dev
+        <MenuLink href="/dev">
+          <CodeIcon className="h-4 w-4" />
+          Dev
+        </MenuLink>
       </Command.Item>
       <Command.Item value="Life" onSelect={() => route('/life')}>
-        <LifeIcon className="h-4 w-4" />
-        Life
+        <MenuLink href="/life">
+          <LifeIcon className="h-4 w-4" />
+          Life
+        </MenuLink>
       </Command.Item>
       <Command.Item
         className="cursor-not-allowed select-none"
